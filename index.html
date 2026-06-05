@@ -1,0 +1,2542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Farm.er Connect — Live Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1B5E20;
+            --primary-light: #2E7D32;
+            --primary-dark: #0D3B10;
+            --secondary: #F9A825;
+            --secondary-light: #FDD835;
+            --accent: #E65100;
+            --accent-light: #FF6D00;
+            --dark: #1A1A2E;
+            --light: #F5F5F0;
+            --white: #FFFFFF;
+            --gray: #6B7280;
+            --gray-light: #E8E8E3;
+            --success: #00C853;
+            --warning: #FFD600;
+            --danger: #FF1744;
+            --info: #00B0FF;
+            --shadow: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.16);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.5;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 3px; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        @keyframes truckMove { 0% { left: 10%; } 50% { left: 60%; } 100% { left: 85%; } }
+
+        .animate-fade { animation: fadeIn 0.4s ease forwards; }
+        .animate-slide { animation: slideIn 0.4s ease forwards; }
+        .animate-shake { animation: shake 0.4s ease; }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+            padding: 0.75rem 1.5rem; border-radius: var(--radius-sm); border: none;
+            font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
+            font-family: inherit; white-space: nowrap;
+        }
+        .btn:active { transform: scale(0.96); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-light); box-shadow: 0 4px 12px rgba(27,94,32,0.3); }
+        .btn-secondary { background: var(--secondary); color: var(--dark); }
+        .btn-secondary:hover { background: var(--secondary-light); }
+        .btn-accent { background: var(--accent); color: white; }
+        .btn-accent:hover { background: var(--accent-light); }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: white; }
+        .btn-ghost { background: transparent; color: var(--gray); }
+        .btn-ghost:hover { background: var(--gray-light); color: var(--dark); }
+        .btn-sm { padding: 0.5rem 1rem; font-size: 0.8rem; }
+        .btn-lg { padding: 1rem 2rem; font-size: 1rem; }
+        .btn-block { width: 100%; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Forms */
+        .form-group { margin-bottom: 1.25rem; }
+        .form-label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem; color: var(--dark); }
+        .form-input, .form-select, .form-textarea {
+            width: 100%; padding: 0.75rem 1rem; border: 2px solid var(--gray-light);
+            border-radius: var(--radius-sm); font-family: inherit; font-size: 0.95rem;
+            transition: all 0.2s; background: white;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(27,94,32,0.1);
+        }
+        .form-textarea { min-height: 100px; resize: vertical; }
+        .form-hint { font-size: 0.8rem; color: var(--gray); margin-top: 0.3rem; }
+        .input-error { border-color: var(--danger) !important; }
+        .error-text { color: var(--danger); font-size: 0.8rem; margin-top: 0.3rem; }
+
+        /* Cards */
+        .card {
+            background: white; border-radius: var(--radius); padding: 1.5rem;
+            box-shadow: var(--shadow); transition: all 0.2s;
+        }
+        .card:hover { box-shadow: var(--shadow-md); }
+        .card-hover:hover { transform: translateY(-3px); }
+
+        /* Badges */
+        .badge {
+            display: inline-flex; align-items: center; gap: 0.25rem;
+            padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem;
+            font-weight: 600; white-space: nowrap;
+        }
+        .badge-success { background: rgba(0,200,83,0.1); color: var(--success); }
+        .badge-warning { background: rgba(255,214,0,0.15); color: #B29500; }
+        .badge-danger { background: rgba(255,23,68,0.1); color: var(--danger); }
+        .badge-info { background: rgba(0,176,255,0.1); color: var(--info); }
+        .badge-primary { background: rgba(27,94,32,0.1); color: var(--primary); }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed; top: 80px; right: 20px; z-index: 10000;
+            display: flex; flex-direction: column; gap: 0.5rem; max-width: 320px;
+        }
+        .toast {
+            background: white; padding: 1rem 1.25rem; border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 0.75rem;
+            animation: slideIn 0.3s ease; border-left: 4px solid var(--primary);
+            font-size: 0.9rem; font-weight: 500;
+        }
+        .toast-success { border-left-color: var(--success); }
+        .toast-error { border-left-color: var(--danger); }
+        .toast-warning { border-left-color: var(--warning); }
+        .toast i { font-size: 1.1rem; }
+        .toast-success i { color: var(--success); }
+        .toast-error i { color: var(--danger); }
+        .toast-warning i { color: var(--warning); }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; padding: 1rem; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal {
+            background: white; border-radius: var(--radius); width: 100%; max-width: 500px;
+            max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg);
+            transform: scale(0.95); transition: transform 0.3s;
+        }
+        .modal-overlay.active .modal { transform: scale(1); }
+        .modal-header {
+            padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--gray-light);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-header h3 { font-size: 1.1rem; font-weight: 700; }
+        .modal-close { background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--gray); }
+        .modal-close:hover { color: var(--danger); }
+        .modal-body { padding: 1.5rem; }
+        .modal-footer {
+            padding: 1rem 1.5rem; border-top: 1px solid var(--gray-light);
+            display: flex; justify-content: flex-end; gap: 0.75rem;
+        }
+
+        /* Layout */
+        .app-container { display: none; min-height: 100vh; }
+        .app-container.active { display: flex; }
+
+        /* Auth Pages */
+        .auth-page {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            padding: 1rem;
+        }
+        .auth-box {
+            background: white; border-radius: var(--radius); padding: 2.5rem;
+            width: 100%; max-width: 480px; box-shadow: var(--shadow-lg); animation: fadeIn 0.5s ease;
+        }
+        .auth-logo {
+            text-align: center; margin-bottom: 2rem;
+            font-family: 'Playfair Display', serif; font-size: 1.75rem; font-weight: 800;
+            color: var(--primary); display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+        }
+        .auth-logo i { color: var(--secondary); }
+        .auth-tabs {
+            display: flex; gap: 0.5rem; margin-bottom: 1.5rem;
+            background: var(--gray-light); padding: 0.25rem; border-radius: var(--radius-sm);
+        }
+        .auth-tab {
+            flex: 1; padding: 0.6rem; border: none; background: none; cursor: pointer;
+            font-weight: 600; font-size: 0.9rem; border-radius: 6px; transition: all 0.2s;
+            font-family: inherit;
+        }
+        .auth-tab.active { background: white; color: var(--primary); box-shadow: var(--shadow); }
+        .role-selector {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.25rem;
+        }
+        .role-option {
+            border: 2px solid var(--gray-light); border-radius: var(--radius-sm); padding: 1rem 0.5rem;
+            text-align: center; cursor: pointer; transition: all 0.2s;
+        }
+        .role-option:hover { border-color: var(--primary-light); background: rgba(27,94,32,0.03); }
+        .role-option.selected { border-color: var(--primary); background: rgba(27,94,32,0.05); }
+        .role-option i { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+        .role-option.farmer i { color: var(--primary); }
+        .role-option.vendor i { color: var(--secondary); }
+        .role-option.transporter i { color: var(--accent); }
+        .role-option span { font-size: 0.8rem; font-weight: 600; display: block; }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 260px; background: var(--dark); color: white;
+            display: flex; flex-direction: column; position: fixed; height: 100vh;
+            z-index: 100; transition: transform 0.3s; overflow-y: auto;
+        }
+        .sidebar-header {
+            padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar-brand {
+            font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 800;
+            display: flex; align-items: center; gap: 0.5rem; color: white; text-decoration: none;
+        }
+        .sidebar-brand i { color: var(--secondary); }
+        .sidebar-user {
+            display: flex; align-items: center; gap: 0.75rem; margin-top: 1.25rem;
+            padding: 0.75rem; background: rgba(255,255,255,0.05); border-radius: var(--radius-sm);
+        }
+        .user-avatar {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.9rem; color: white; flex-shrink: 0;
+        }
+        .user-info { overflow: hidden; }
+        .user-name { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-role { font-size: 0.75rem; opacity: 0.7; text-transform: capitalize; }
+        .sidebar-nav { flex: 1; padding: 1rem 0; }
+        .nav-item {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.85rem 1.5rem; cursor: pointer; transition: all 0.2s;
+            border-left: 3px solid transparent; text-decoration: none; color: rgba(255,255,255,0.7);
+            font-size: 0.9rem; font-weight: 500;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
+        .nav-item.active { background: rgba(255,255,255,0.08); color: white; border-left-color: var(--secondary); }
+        .nav-item i { width: 20px; text-align: center; }
+        .sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); }
+
+        /* Main Content */
+        .main-content {
+            flex: 1; margin-left: 260px; min-height: 100vh; display: flex; flex-direction: column;
+        }
+        .topbar {
+            height: 64px; background: white; border-bottom: 1px solid var(--gray-light);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2rem; position: sticky; top: 0; z-index: 50;
+        }
+        .topbar-title { font-size: 1.25rem; font-weight: 700; color: var(--dark); }
+        .topbar-actions { display: flex; align-items: center; gap: 1rem; }
+        .icon-btn {
+            width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--light);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            color: var(--gray); transition: all 0.2s; position: relative;
+        }
+        .icon-btn:hover { background: var(--gray-light); color: var(--dark); }
+        .icon-btn .notif-dot {
+            position: absolute; top: 2px; right: 2px; width: 10px; height: 10px;
+            background: var(--danger); border-radius: 50%; border: 2px solid white;
+        }
+
+        .page-content { padding: 2rem; flex: 1; }
+        .page { display: none; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white; border-radius: var(--radius); padding: 1.5rem;
+            box-shadow: var(--shadow); border: 1px solid var(--gray-light);
+        }
+        .stat-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
+        .stat-icon {
+            width: 44px; height: 44px; border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+        }
+        .stat-icon.green { background: rgba(0,200,83,0.1); color: var(--success); }
+        .stat-icon.blue { background: rgba(0,176,255,0.1); color: var(--info); }
+        .stat-icon.orange { background: rgba(230,81,0,0.1); color: var(--accent); }
+        .stat-icon.yellow { background: rgba(249,168,37,0.1); color: #B29500; }
+        .stat-value { font-size: 1.75rem; font-weight: 800; color: var(--dark); }
+        .stat-label { font-size: 0.85rem; color: var(--gray); margin-top: 0.25rem; }
+        .stat-trend { font-size: 0.8rem; margin-top: 0.5rem; font-weight: 600; }
+        .stat-trend.up { color: var(--success); }
+        .stat-trend.down { color: var(--danger); }
+
+        /* Content Cards */
+        .content-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: gap;
+        }
+        .content-header h2 { font-size: 1.25rem; font-weight: 700; }
+        .search-box {
+            position: relative; max-width: 300px; width: 100%;
+        }
+        .search-box i {
+            position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
+            color: var(--gray); font-size: 0.9rem;
+        }
+        .search-box input {
+            width: 100%; padding: 0.6rem 1rem 0.6rem 2.5rem; border: 2px solid var(--gray-light);
+            border-radius: var(--radius-sm); font-family: inherit; font-size: 0.9rem;
+        }
+        .search-box input:focus { outline: none; border-color: var(--primary); }
+
+        /* Produce Grid */
+        .produce-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.25rem;
+        }
+        .produce-card {
+            background: white; border-radius: var(--radius); overflow: hidden;
+            box-shadow: var(--shadow); border: 1px solid var(--gray-light);
+            transition: all 0.2s; display: flex; flex-direction: column;
+        }
+        .produce-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+        .produce-image {
+            height: 160px; background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            display: flex; align-items: center; justify-content: center; font-size: 3.5rem;
+            position: relative;
+        }
+        .produce-image .produce-badge {
+            position: absolute; top: 0.75rem; right: 0.75rem;
+        }
+        .produce-details { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+        .produce-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.25rem; }
+        .produce-farmer { font-size: 0.8rem; color: var(--gray); margin-bottom: 0.5rem; }
+        .produce-price { font-size: 1.3rem; font-weight: 800; color: var(--primary); margin-bottom: 0.5rem; }
+        .produce-price span { font-size: 0.85rem; font-weight: 500; color: var(--gray); }
+        .produce-meta { display: flex; gap: 1rem; font-size: 0.8rem; color: var(--gray); margin-bottom: 1rem; }
+        .produce-meta span { display: flex; align-items: center; gap: 0.3rem; }
+        .produce-actions { margin-top: auto; display: flex; gap: 0.5rem; }
+        .produce-actions .btn { flex: 1; }
+
+        /* Order Cards */
+        .order-list { display: flex; flex-direction: column; gap: 1rem; }
+        .order-card {
+            background: white; border-radius: var(--radius); padding: 1.25rem;
+            box-shadow: var(--shadow); border: 1px solid var(--gray-light);
+            display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;
+        }
+        .order-info h4 { font-weight: 700; margin-bottom: 0.25rem; }
+        .order-info p { font-size: 0.85rem; color: var(--gray); }
+        .order-meta { text-align: right; }
+        .order-meta .order-price { font-size: 1.2rem; font-weight: 800; color: var(--primary); }
+        .order-status { margin-top: 0.5rem; }
+
+        /* Transport Cards */
+        .transport-card {
+            background: white; border-radius: var(--radius); padding: 1.5rem;
+            box-shadow: var(--shadow); border: 1px solid var(--gray-light);
+            margin-bottom: 1rem; transition: all 0.2s;
+        }
+        .transport-card:hover { border-color: var(--primary-light); }
+        .transport-route {
+            display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;
+        }
+        .route-point { text-align: center; }
+        .route-point .city { font-weight: 700; font-size: 1rem; }
+        .route-point .time { font-size: 0.8rem; color: var(--gray); }
+        .route-arrow { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
+        .route-arrow::before {
+            content: ''; position: absolute; height: 2px; background: var(--gray-light); left: 0; right: 0;
+        }
+        .route-arrow i { background: white; padding: 0 0.5rem; color: var(--primary); position: relative; z-index: 2; }
+        .transport-details {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+            padding: 1rem 0; border-top: 1px solid var(--gray-light); border-bottom: 1px solid var(--gray-light);
+            margin-bottom: 1rem;
+        }
+        .detail-item { text-align: center; }
+        .detail-item .label { font-size: 0.75rem; color: var(--gray); text-transform: uppercase; letter-spacing: 0.05em; }
+        .detail-item .value { font-weight: 700; font-size: 1rem; margin-top: 0.25rem; }
+
+        /* Tracking */
+        .tracking-map {
+            background: linear-gradient(135deg, #E8F5E9, #C8E6C9); border-radius: var(--radius);
+            height: 280px; position: relative; overflow: hidden; margin-bottom: 1.5rem;
+        }
+        .map-road {
+            position: absolute; top: 50%; left: 5%; right: 5%; height: 4px;
+            background: white; border-radius: 2px; transform: translateY(-50%);
+        }
+        .map-stop {
+            position: absolute; top: 50%; width: 24px; height: 24px;
+            background: var(--primary); border-radius: 50%; border: 4px solid white;
+            box-shadow: var(--shadow); transform: translate(-50%, -50%); z-index: 2;
+        }
+        .map-stop.start { left: 5%; }
+        .map-stop.end { left: 95%; }
+        .map-truck {
+            position: absolute; top: 42%; width: 36px; height: 36px;
+            background: var(--secondary); border-radius: 50%; border: 3px solid white;
+            box-shadow: var(--shadow-md); display: flex; align-items: center; justify-content: center;
+            color: var(--dark); font-size: 0.85rem; z-index: 3;
+            animation: truckMove 8s ease-in-out infinite;
+        }
+        .map-label {
+            position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%);
+            background: white; padding: 0.5rem 1rem; border-radius: 20px;
+            box-shadow: var(--shadow); font-weight: 600; font-size: 0.9rem; color: var(--primary);
+        }
+        .timeline {
+            position: relative; padding-left: 2rem;
+        }
+        .timeline::before {
+            content: ''; position: absolute; left: 0.5rem; top: 0; bottom: 0;
+            width: 2px; background: var(--gray-light);
+        }
+        .timeline-item { position: relative; padding-bottom: 1.5rem; }
+        .timeline-item::before {
+            content: ''; position: absolute; left: -1.85rem; top: 0.25rem;
+            width: 14px; height: 14px; border-radius: 50%; background: var(--gray-light);
+            border: 3px solid white; box-shadow: 0 0 0 2px var(--gray-light);
+        }
+        .timeline-item.completed::before { background: var(--success); box-shadow: 0 0 0 2px var(--success); }
+        .timeline-item.active::before { background: var(--secondary); box-shadow: 0 0 0 2px var(--secondary); animation: pulse 2s infinite; }
+        .timeline-item h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.2rem; }
+        .timeline-item p { font-size: 0.85rem; color: var(--gray); }
+        .timeline-item .time { font-size: 0.75rem; color: var(--gray); margin-top: 0.2rem; }
+
+        /* Tables */
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th, .data-table td { padding: 0.875rem 1rem; text-align: left; font-size: 0.9rem; }
+        .data-table th { font-weight: 600; color: var(--gray); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid var(--gray-light); }
+        .data-table td { border-bottom: 1px solid var(--gray-light); }
+        .data-table tr:hover td { background: rgba(27,94,32,0.02); }
+
+        /* Empty State */
+        .empty-state { text-align: center; padding: 3rem; }
+        .empty-state i { font-size: 3rem; color: var(--gray-light); margin-bottom: 1rem; }
+        .empty-state h3 { font-size: 1.1rem; color: var(--gray); margin-bottom: 0.5rem; }
+        .empty-state p { font-size: 0.9rem; color: var(--gray); margin-bottom: 1rem; }
+
+        /* Mobile */
+        .mobile-toggle {
+            display: none; background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--dark);
+        }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .mobile-toggle { display: block; }
+            .topbar { padding: 0 1rem; }
+            .page-content { padding: 1rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .produce-grid { grid-template-columns: 1fr; }
+            .transport-route { flex-direction: column; gap: 0.5rem; }
+            .route-arrow { transform: rotate(90deg); margin: 0.5rem 0; }
+            .transport-details { grid-template-columns: 1fr; }
+            .order-card { flex-direction: column; text-align: center; }
+            .order-meta { text-align: center; }
+        }
+
+        /* Loading */
+        .loading-overlay {
+            position: fixed; inset: 0; background: rgba(255,255,255,0.9);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 100000; gap: 1rem;
+        }
+        .loading-overlay.hidden { display: none; }
+        .spinner {
+            width: 48px; height: 48px; border: 4px solid var(--gray-light);
+            border-top-color: var(--primary); border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        .loading-text { font-weight: 600; color: var(--gray); }
+
+        /* Cart */
+        .cart-sidebar {
+            position: fixed; top: 0; right: 0; width: 380px; max-width: 100%; height: 100vh;
+            background: white; box-shadow: var(--shadow-lg); z-index: 200;
+            transform: translateX(100%); transition: transform 0.3s;
+            display: flex; flex-direction: column;
+        }
+        .cart-sidebar.open { transform: translateX(0); }
+        .cart-header {
+            padding: 1.25rem; border-bottom: 1px solid var(--gray-light);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .cart-body { flex: 1; overflow-y: auto; padding: 1rem; }
+        .cart-item {
+            display: flex; gap: 1rem; padding: 1rem; border-bottom: 1px solid var(--gray-light);
+        }
+        .cart-item-img {
+            width: 60px; height: 60px; border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;
+        }
+        .cart-item-details { flex: 1; }
+        .cart-item-title { font-weight: 600; font-size: 0.9rem; }
+        .cart-item-price { color: var(--primary); font-weight: 700; font-size: 0.95rem; }
+        .cart-item-qty { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; }
+        .qty-btn {
+            width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--gray-light);
+            background: white; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: var(--dark);
+        }
+        .cart-footer {
+            padding: 1.25rem; border-top: 1px solid var(--gray-light);
+            background: var(--light);
+        }
+        .cart-total {
+            display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .cart-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 199; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .cart-overlay.active { opacity: 1; pointer-events: all; }
+
+        /* Notifications Panel */
+        .notif-panel {
+            position: absolute; top: 50px; right: 0; width: 320px; max-width: 90vw;
+            background: white; border-radius: var(--radius); box-shadow: var(--shadow-lg);
+            z-index: 60; opacity: 0; pointer-events: none; transform: translateY(-10px); transition: all 0.2s;
+        }
+        .notif-panel.active { opacity: 1; pointer-events: all; transform: translateY(0); }
+        .notif-header { padding: 1rem; border-bottom: 1px solid var(--gray-light); font-weight: 700; }
+        .notif-list { max-height: 300px; overflow-y: auto; }
+        .notif-item { padding: 1rem; border-bottom: 1px solid var(--gray-light); cursor: pointer; transition: background 0.2s; }
+        .notif-item:hover { background: var(--light); }
+        .notif-item.unread { border-left: 3px solid var(--primary); }
+        .notif-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.2rem; }
+        .notif-text { font-size: 0.8rem; color: var(--gray); }
+        .notif-time { font-size: 0.75rem; color: var(--gray); margin-top: 0.3rem; }
+
+        /* Responsive Grid */
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+        @media (max-width: 768px) {
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+        }
+
+        /* Utility */
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .text-primary { color: var(--primary); }
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+        .text-gray { color: var(--gray); }
+        .font-bold { font-weight: 700; }
+        .mt-1 { margin-top: 1rem; }
+        .mt-2 { margin-top: 2rem; }
+        .mb-1 { margin-bottom: 1rem; }
+        .mb-2 { margin-bottom: 2rem; }
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-1 { gap: 1rem; }
+        .gap-2 { gap: 2rem; }
+        .w-full { width: 100%; }
+        .flex-wrap { flex-wrap: wrap; }
+    </style>
+<base target="_blank">
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-overlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading Farm.er Connect...</div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Cart Overlay -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3><i class="fas fa-shopping-cart"></i> Your Cart</h3>
+            <button class="modal-close" onclick="toggleCart()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cart-body" id="cartBody">
+            <div class="empty-state">
+                <i class="fas fa-shopping-basket"></i>
+                <h3>Cart is empty</h3>
+                <p>Browse produce and add items to your cart</p>
+            </div>
+        </div>
+        <div class="cart-footer" id="cartFooter" style="display: none;">
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="cartTotal">KES 0</span>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="checkout()">
+                <i class="fas fa-credit-card"></i> Checkout with M-Pesa
+            </button>
+        </div>
+    </div>
+
+    <!-- Auth Page -->
+    <div id="authPage" class="auth-page">
+        <div class="auth-box">
+            <div class="auth-logo">
+                <i class="fas fa-leaf"></i>
+                Farm.er Connect
+            </div>
+
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+                <button class="auth-tab" onclick="switchAuthTab('register')">Get Started</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="loginEmail" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block btn-lg">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+                <p class="text-center mt-1" style="font-size: 0.85rem; color: var(--gray);">
+                    Demo accounts: <span class="text-primary" style="cursor: pointer;" onclick="fillDemo('farmer')">Farmer</span> • 
+                    <span class="text-primary" style="cursor: pointer;" onclick="fillDemo('vendor')">Vendor</span> • 
+                    <span class="text-primary" style="cursor: pointer;" onclick="fillDemo('transporter')">Transporter</span>
+                </p>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="hidden" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" id="regName" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="regEmail" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" class="form-input" id="regPhone" placeholder="+254 700 000 000" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-input" id="regLocation" placeholder="Kiambu, Kenya" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Select Your Role</label>
+                    <div class="role-selector">
+                        <div class="role-option farmer" onclick="selectRole('farmer')" data-role="farmer">
+                            <i class="fas fa-tractor"></i>
+                            <span>Farmer</span>
+                        </div>
+                        <div class="role-option vendor" onclick="selectRole('vendor')" data-role="vendor">
+                            <i class="fas fa-store"></i>
+                            <span>Vendor</span>
+                        </div>
+                        <div class="role-option transporter" onclick="selectRole('transporter')" data-role="transporter">
+                            <i class="fas fa-truck"></i>
+                            <span>Transporter</span>
+                        </div>
+                    </div>
+                    <input type="hidden" id="regRole" required>
+                    <div class="error-text hidden" id="roleError">Please select a role</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="regPassword" placeholder="Min 6 characters" required minlength="6">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block btn-lg">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="appContainer" class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="sidebar-brand" onclick="navigateTo('dashboard')">
+                    <i class="fas fa-leaf"></i>
+                    Farm.er Connect
+                </a>
+                <div class="sidebar-user">
+                    <div class="user-avatar" id="userAvatar">JD</div>
+                    <div class="user-info">
+                        <div class="user-name" id="userName">John Doe</div>
+                        <div class="user-role" id="userRole">Farmer</div>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav" id="sidebarNav">
+                <!-- Dynamically populated -->
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn btn-ghost btn-block" onclick="logout()" style="color: rgba(255,255,255,0.7); justify-content: flex-start;">
+                    <i class="fas fa-sign-out-alt"></i> Sign Out
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <header class="topbar">
+                <button class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                <h1 class="topbar-title" id="pageTitle">Dashboard</h1>
+                <div class="topbar-actions">
+                    <button class="icon-btn" id="cartBtn" onclick="toggleCart()">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="notif-dot hidden" id="cartDot"></span>
+                    </button>
+                    <button class="icon-btn" onclick="toggleNotif()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notif-dot hidden" id="notifDot"></span>
+                    </button>
+                    <div style="position: relative;">
+                        <div class="notif-panel" id="notifPanel">
+                            <div class="notif-header">Notifications</div>
+                            <div class="notif-list" id="notifList">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content" id="pageContent">
+                <!-- Pages dynamically loaded here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Modal Title</h3>
+                <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer" id="modalFooter"></div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== DATA STORE (Simulated Backend) ====================
+        const Store = {
+            users: JSON.parse(localStorage.getItem('fc_users')) || [],
+            produce: JSON.parse(localStorage.getItem('fc_produce')) || [],
+            orders: JSON.parse(localStorage.getItem('fc_orders')) || [],
+            transports: JSON.parse(localStorage.getItem('fc_transports')) || [],
+            notifications: JSON.parse(localStorage.getItem('fc_notifications')) || [],
+            cart: JSON.parse(localStorage.getItem('fc_cart')) || [],
+            currentUser: JSON.parse(localStorage.getItem('fc_currentUser')) || null,
+
+            save() {
+                localStorage.setItem('fc_users', JSON.stringify(this.users));
+                localStorage.setItem('fc_produce', JSON.stringify(this.produce));
+                localStorage.setItem('fc_orders', JSON.stringify(this.orders));
+                localStorage.setItem('fc_transports', JSON.stringify(this.transports));
+                localStorage.setItem('fc_notifications', JSON.stringify(this.notifications));
+                localStorage.setItem('fc_cart', JSON.stringify(this.cart));
+                if (this.currentUser) localStorage.setItem('fc_currentUser', JSON.stringify(this.currentUser));
+            },
+
+            initDemoData() {
+                if (this.users.length === 0) {
+                    // Demo Farmer
+                    const farmer = {
+                        id: 'farmer_1', name: 'James Mwangi', email: 'farmer@demo.com',
+                        phone: '+254712345678', location: 'Kiambu, Kenya', role: 'farmer',
+                        password: 'demo123', avatar: 'JM', createdAt: new Date().toISOString()
+                    };
+                    // Demo Vendor
+                    const vendor = {
+                        id: 'vendor_1', name: 'Amina Okafor', email: 'vendor@demo.com',
+                        phone: '+2348012345678', location: 'Lagos, Nigeria', role: 'vendor',
+                        password: 'demo123', avatar: 'AO', createdAt: new Date().toISOString()
+                    };
+                    // Demo Transporter
+                    const transporter = {
+                        id: 'trans_1', name: 'Peter Kimani', email: 'transporter@demo.com',
+                        phone: '+254723456789', location: 'Nakuru, Kenya', role: 'transporter',
+                        password: 'demo123', avatar: 'PK', vehicle: 'Isuzu FRR Truck', capacity: '5000kg',
+                        createdAt: new Date().toISOString()
+                    };
+                    this.users = [farmer, vendor, transporter];
+
+                    // Demo Produce
+                    this.produce = [
+                        { id: 'p1', farmerId: 'farmer_1', farmerName: 'James Mwangi', farmerLocation: 'Kiambu, Kenya',
+                          title: 'Fresh Tomatoes', category: 'vegetables', emoji: '🍅', grade: 'A',
+                          price: 45, unit: 'kg', quantity: 500, available: 320,
+                          description: 'Vine-ripened red tomatoes, harvested this morning. Perfect for salads and cooking.',
+                          freshness: '2 days', status: 'available', createdAt: new Date().toISOString() },
+                        { id: 'p2', farmerId: 'farmer_1', farmerName: 'James Mwangi', farmerLocation: 'Kiambu, Kenya',
+                          title: 'Sukuma Wiki', category: 'vegetables', emoji: '🥬', grade: 'A',
+                          price: 25, unit: 'bunch', quantity: 200, available: 150,
+                          description: 'Organic kale, pesticide-free. Very fresh and green.',
+                          freshness: 'Today', status: 'available', createdAt: new Date().toISOString() },
+                        { id: 'p3', farmerId: 'farmer_1', farmerName: 'James Mwangi', farmerLocation: 'Kiambu, Kenya',
+                          title: 'Carrots', category: 'vegetables', emoji: '🥕', grade: 'B',
+                          price: 35, unit: 'kg', quantity: 100, available: 45,
+                          description: 'Sweet orange carrots, good size for cooking.',
+                          freshness: '3 days', status: 'available', createdAt: new Date().toISOString() },
+                        { id: 'p4', farmerId: 'farmer_1', farmerName: 'James Mwangi', farmerLocation: 'Kiambu, Kenya',
+                          title: 'Red Onions', category: 'vegetables', emoji: '🧅', grade: 'A',
+                          price: 60, unit: 'kg', quantity: 80, available: 80,
+                          description: 'Large red onions, perfect for stews and salads.',
+                          freshness: '5 days', status: 'available', createdAt: new Date().toISOString() },
+                        { id: 'p5', farmerId: 'farmer_1', farmerName: 'James Mwangi', farmerLocation: 'Kiambu, Kenya',
+                          title: 'Bananas', category: 'fruits', emoji: '🍌', grade: 'A',
+                          price: 15, unit: 'kg', quantity: 1000, available: 600,
+                          description: 'Cavendish bananas, ripe and ready to eat.',
+                          freshness: '2 days', status: 'available', createdAt: new Date().toISOString() },
+                        { id: 'p6', farmerId: 'farmer_1', farmerName: 'James Mwangi', farmerLocation: 'Kiambu, Kenya',
+                          title: 'Strawberries', category: 'fruits', emoji: '🍓', grade: 'A',
+                          price: 120, unit: 'punnet', quantity: 50, available: 30,
+                          description: 'Sweet strawberries from Nanyuki highlands. Cold chain required.',
+                          freshness: '1 day', status: 'available', createdAt: new Date().toISOString() }
+                    ];
+
+                    // Demo Orders
+                    this.orders = [
+                        { id: 'o1', vendorId: 'vendor_1', vendorName: 'Amina Okafor', farmerId: 'farmer_1',
+                          items: [{ produceId: 'p1', title: 'Fresh Tomatoes', qty: 50, price: 45, total: 2250 }],
+                          total: 2250, status: 'delivered', transportId: 'trans_1', transportStatus: 'completed',
+                          createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+                          deliveryDate: new Date(Date.now() - 86400000).toISOString() },
+                        { id: 'o2', vendorId: 'vendor_1', vendorName: 'Amina Okafor', farmerId: 'farmer_1',
+                          items: [{ produceId: 'p2', title: 'Sukuma Wiki', qty: 30, price: 25, total: 750 }],
+                          total: 750, status: 'in_transit', transportId: 'trans_1', transportStatus: 'picked_up',
+                          createdAt: new Date(Date.now() - 86400000 * 0.5).toISOString(),
+                          deliveryDate: null }
+                    ];
+
+                    // Demo Transports
+                    this.transports = [
+                        { id: 't1', transporterId: 'trans_1', transporterName: 'Peter Kimani', vehicle: 'Isuzu FRR Truck',
+                          from: 'Kiambu', to: 'Nairobi CBD', distance: 45, duration: '1h 20min',
+                          capacity: 5000, price: 3500, type: 'standard', status: 'available',
+                          produceType: 'vegetables', rating: 4.8, trips: 124, createdAt: new Date().toISOString() },
+                        { id: 't2', transporterId: 'trans_1', transporterName: 'Peter Kimani', vehicle: 'Isuzu FRR Truck (Cold Box)',
+                          from: 'Nanyuki', to: 'Nairobi', distance: 200, duration: '3h 30min',
+                          capacity: 3000, price: 12000, type: 'refrigerated', status: 'available',
+                          produceType: 'fruits', rating: 4.9, trips: 89, createdAt: new Date().toISOString() },
+                        { id: 't3', transporterId: 'trans_1', transporterName: 'Peter Kimani', vehicle: 'Isuzu FRR Truck',
+                          from: 'Nairobi', to: 'Nakuru', distance: 160, duration: '2h 45min',
+                          capacity: 5000, price: 8500, type: 'backhaul', status: 'available',
+                          produceType: 'inputs', rating: 4.7, trips: 200, createdAt: new Date().toISOString() }
+                    ];
+
+                    this.save();
+                }
+            }
+        };
+
+        // ==================== APP STATE ====================
+        let currentPage = 'dashboard';
+        let selectedRole = '';
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            Store.initDemoData();
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+                if (Store.currentUser) {
+                    showApp();
+                } else {
+                    showAuth();
+                }
+            }, 800);
+        });
+
+        // ==================== AUTH FUNCTIONS ====================
+        function showAuth() {
+            document.getElementById('authPage').style.display = 'flex';
+            document.getElementById('appContainer').classList.remove('active');
+        }
+
+        function showApp() {
+            document.getElementById('authPage').style.display = 'none';
+            document.getElementById('appContainer').classList.add('active');
+            updateUserUI();
+            buildSidebar();
+            navigateTo('dashboard');
+            updateCartUI();
+            updateNotifications();
+        }
+
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            if (tab === 'login') {
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('registerForm').classList.add('hidden');
+            } else {
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('registerForm').classList.remove('hidden');
+            }
+        }
+
+        function selectRole(role) {
+            selectedRole = role;
+            document.querySelectorAll('.role-option').forEach(o => o.classList.remove('selected'));
+            document.querySelector(`.role-option[data-role="${role}"]`).classList.add('selected');
+            document.getElementById('regRole').value = role;
+            document.getElementById('roleError').classList.add('hidden');
+        }
+
+        function fillDemo(role) {
+            const demos = {
+                farmer: { email: 'farmer@demo.com', password: 'demo123' },
+                vendor: { email: 'vendor@demo.com', password: 'demo123' },
+                transporter: { email: 'transporter@demo.com', password: 'demo123' }
+            };
+            document.getElementById('loginEmail').value = demos[role].email;
+            document.getElementById('loginPassword').value = demos[role].password;
+            showToast('Demo credentials filled! Click Sign In', 'info');
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const user = Store.users.find(u => u.email === email && u.password === password);
+            if (!user) {
+                showToast('Invalid email or password', 'error');
+                document.getElementById('loginForm').classList.add('animate-shake');
+                setTimeout(() => document.getElementById('loginForm').classList.remove('animate-shake'), 400);
+                return;
+            }
+
+            Store.currentUser = user;
+            Store.save();
+            showApp();
+            showToast(`Welcome back, ${user.name}!`, 'success');
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const phone = document.getElementById('regPhone').value;
+            const location = document.getElementById('regLocation').value;
+            const role = document.getElementById('regRole').value;
+            const password = document.getElementById('regPassword').value;
+
+            if (!role) {
+                document.getElementById('roleError').classList.remove('hidden');
+                return;
+            }
+
+            if (Store.users.find(u => u.email === email)) {
+                showToast('Email already registered', 'error');
+                return;
+            }
+
+            const user = {
+                id: `user_${Date.now()}`, name, email, phone, location, role, password,
+                avatar: name.split(' ').map(n => n[0]).join('').toUpperCase(),
+                createdAt: new Date().toISOString()
+            };
+
+            Store.users.push(user);
+            Store.currentUser = user;
+            Store.save();
+            showApp();
+            showToast('Account created successfully!', 'success');
+        }
+
+        function logout() {
+            Store.currentUser = null;
+            localStorage.removeItem('fc_currentUser');
+            Store.cart = [];
+            Store.save();
+            showAuth();
+            showToast('Signed out successfully', 'info');
+        }
+
+        // ==================== UI UPDATES ====================
+        function updateUserUI() {
+            const user = Store.currentUser;
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userRole').textContent = user.role;
+            document.getElementById('userAvatar').textContent = user.avatar;
+        }
+
+        function buildSidebar() {
+            const role = Store.currentUser.role;
+            const nav = document.getElementById('sidebarNav');
+
+            const menus = {
+                farmer: [
+                    { id: 'dashboard', icon: 'fa-chart-line', label: 'Dashboard' },
+                    { id: 'my-produce', icon: 'fa-seedling', label: 'My Produce' },
+                    { id: 'orders', icon: 'fa-clipboard-list', label: 'Orders' },
+                    { id: 'market-prices', icon: 'fa-tags', label: 'Market Prices' },
+                    { id: 'transport', icon: 'fa-truck', label: 'Find Transport' },
+                    { id: 'messages', icon: 'fa-comments', label: 'Messages' }
+                ],
+                vendor: [
+                    { id: 'dashboard', icon: 'fa-chart-line', label: 'Dashboard' },
+                    { id: 'marketplace', icon: 'fa-store', label: 'Marketplace' },
+                    { id: 'orders', icon: 'fa-clipboard-list', label: 'My Orders' },
+                    { id: 'tracking', icon: 'fa-map-marker-alt', label: 'Track Delivery' },
+                    { id: 'suppliers', icon: 'fa-handshake', label: 'My Suppliers' },
+                    { id: 'messages', icon: 'fa-comments', label: 'Messages' }
+                ],
+                transporter: [
+                    { id: 'dashboard', icon: 'fa-chart-line', label: 'Dashboard' },
+                    { id: 'loads', icon: 'fa-boxes', label: 'Available Loads' },
+                    { id: 'my-jobs', icon: 'fa-route', label: 'My Jobs' },
+                    { id: 'earnings', icon: 'fa-wallet', label: 'Earnings' },
+                    { id: 'vehicle', icon: 'fa-truck-moving', label: 'My Vehicle' },
+                    { id: 'messages', icon: 'fa-comments', label: 'Messages' }
+                ]
+            };
+
+            nav.innerHTML = menus[role].map(item => `
+                <a href="#" class="nav-item ${item.id === 'dashboard' ? 'active' : ''}" data-page="${item.id}" onclick="navigateTo('${item.id}')">
+                    <i class="fas ${item.icon}"></i>
+                    <span>${item.label}</span>
+                </a>
+            `).join('');
+        }
+
+        function navigateTo(page) {
+            currentPage = page;
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelector(`.nav-item[data-page="${page}"]`)?.classList.add('active');
+
+            const titles = {
+                dashboard: 'Dashboard', 'my-produce': 'My Produce', orders: 'Orders',
+                'market-prices': 'Market Prices', transport: 'Find Transport', messages: 'Messages',
+                marketplace: 'Marketplace', tracking: 'Track Delivery', suppliers: 'My Suppliers',
+                loads: 'Available Loads', 'my-jobs': 'My Jobs', earnings: 'Earnings', vehicle: 'My Vehicle'
+            };
+            document.getElementById('pageTitle').textContent = titles[page] || page;
+
+            // Close mobile sidebar
+            document.getElementById('sidebar').classList.remove('open');
+
+            renderPage(page);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // ==================== PAGE RENDERERS ====================
+        function renderPage(page) {
+            const container = document.getElementById('pageContent');
+            const role = Store.currentUser.role;
+
+            const renderers = {
+                farmer: {
+                    dashboard: renderFarmerDashboard,
+                    'my-produce': renderMyProduce,
+                    orders: renderOrders,
+                    'market-prices': renderMarketPrices,
+                    transport: renderTransport,
+                    messages: renderMessages
+                },
+                vendor: {
+                    dashboard: renderVendorDashboard,
+                    marketplace: renderMarketplace,
+                    orders: renderOrders,
+                    tracking: renderTracking,
+                    suppliers: renderSuppliers,
+                    messages: renderMessages
+                },
+                transporter: {
+                    dashboard: renderTransporterDashboard,
+                    loads: renderLoads,
+                    'my-jobs': renderMyJobs,
+                    earnings: renderEarnings,
+                    vehicle: renderVehicle,
+                    messages: renderMessages
+                }
+            };
+
+            const renderer = renderers[role]?.[page];
+            if (renderer) {
+                container.innerHTML = renderer();
+                attachPageListeners(page);
+            }
+        }
+
+        // ==================== FARMER DASHBOARD ====================
+        function renderFarmerDashboard() {
+            const myProduce = Store.produce.filter(p => p.farmerId === Store.currentUser.id);
+            const myOrders = Store.orders.filter(o => o.farmerId === Store.currentUser.id);
+            const totalRevenue = myOrders.reduce((sum, o) => sum + o.total, 0);
+            const activeListings = myProduce.filter(p => p.status === 'available').length;
+
+            return `
+                <div class="animate-fade">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value">${myOrders.length}</div>
+                                    <div class="stat-label">Total Orders</div>
+                                </div>
+                                <div class="stat-icon green"><i class="fas fa-shopping-bag"></i></div>
+                            </div>
+                            <div class="stat-trend up"><i class="fas fa-arrow-up"></i> +3 this week</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value">KES ${totalRevenue.toLocaleString()}</div>
+                                    <div class="stat-label">Total Revenue</div>
+                                </div>
+                                <div class="stat-icon yellow"><i class="fas fa-money-bill-wave"></i></div>
+                            </div>
+                            <div class="stat-trend up"><i class="fas fa-arrow-up"></i> +22% vs last month</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value">${activeListings}</div>
+                                    <div class="stat-label">Active Listings</div>
+                                </div>
+                                <div class="stat-icon blue"><i class="fas fa-seedling"></i></div>
+                            </div>
+                            <div class="stat-trend">${myProduce.reduce((s, p) => s + p.available, 0)} kg available</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value">94%</div>
+                                    <div class="stat-label">Quality Score</div>
+                                </div>
+                                <div class="stat-icon orange"><i class="fas fa-star"></i></div>
+                            </div>
+                            <div class="stat-trend up">Top rated farmer</div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="card">
+                            <div class="content-header">
+                                <h2><i class="fas fa-chart-bar"></i> Recent Orders</h2>
+                                <button class="btn btn-ghost btn-sm" onclick="navigateTo('orders')">View All</button>
+                            </div>
+                            ${myOrders.length === 0 ? '<div class="empty-state"><i class="fas fa-clipboard"></i><h3>No orders yet</h3></div>' :
+                                `<div class="order-list">
+                                    ${myOrders.slice(0, 3).map(o => `
+                                        <div class="order-card">
+                                            <div class="order-info">
+                                                <h4>Order #${o.id.slice(-4).toUpperCase()}</h4>
+                                                <p>${o.items.map(i => `${i.title} (${i.qty} ${getUnit(i.title)})`).join(', ')}</p>
+                                                <p style="margin-top: 0.3rem;"><i class="fas fa-user"></i> ${o.vendorName}</p>
+                                            </div>
+                                            <div class="order-meta">
+                                                <div class="order-price">KES ${o.total.toLocaleString()}</div>
+                                                <span class="badge badge-${o.status === 'delivered' ? 'success' : o.status === 'in_transit' ? 'warning' : 'info'}">${formatStatus(o.status)}</span>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>`
+                            }
+                        </div>
+
+                        <div class="card">
+                            <div class="content-header">
+                                <h2><i class="fas fa-lightbulb"></i> AI Insights</h2>
+                            </div>
+                            <div style="padding: 1rem 0;">
+                                <div style="background: rgba(27,94,32,0.05); border-radius: var(--radius-sm); padding: 1rem; border-left: 4px solid var(--primary); margin-bottom: 1rem;">
+                                    <h4 style="color: var(--primary); margin-bottom: 0.5rem;"><i class="fas fa-arrow-trend-up"></i> Price Alert</h4>
+                                    <p style="font-size: 0.9rem;">Tomato prices in Nairobi are up <strong>12%</strong> this week due to short supply. Good time to list your harvest.</p>
+                                </div>
+                                <div style="background: rgba(249,168,37,0.1); border-radius: var(--radius-sm); padding: 1rem; border-left: 4px solid var(--secondary); margin-bottom: 1rem;">
+                                    <h4 style="color: #B29500; margin-bottom: 0.5rem;"><i class="fas fa-clock"></i> Harvest Timing</h4>
+                                    <p style="font-size: 0.9rem;">Your Sukuma Wiki will reach optimal maturity in <strong>2 days</strong>. Start preparing for listing.</p>
+                                </div>
+                                <div style="background: rgba(0,176,255,0.05); border-radius: var(--radius-sm); padding: 1rem; border-left: 4px solid var(--info);">
+                                    <h4 style="color: var(--info); margin-bottom: 0.5rem;"><i class="fas fa-truck"></i> Transport</h4>
+                                    <p style="font-size: 0.9rem;">3 trucks available near Kiambu tomorrow morning. Book early for best rates.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==================== MY PRODUCE ====================
+        function renderMyProduce() {
+            const myProduce = Store.produce.filter(p => p.farmerId === Store.currentUser.id);
+            return `
+                <div class="animate-fade">
+                    <div class="content-header">
+                        <h2><i class="fas fa-seedling"></i> My Produce Listings</h2>
+                        <button class="btn btn-primary" onclick="openAddProduceModal()">
+                            <i class="fas fa-plus"></i> Add New Listing
+                        </button>
+                    </div>
+                    ${myProduce.length === 0 ? `
+                        <div class="card empty-state">
+                            <i class="fas fa-seedling"></i>
+                            <h3>No produce listed yet</h3>
+                            <p>Start selling by adding your first produce listing</p>
+                            <button class="btn btn-primary mt-1" onclick="openAddProduceModal()">
+                                <i class="fas fa-plus"></i> Add Produce
+                            </button>
+                        </div>
+                    ` : `
+                        <div class="produce-grid">
+                            ${myProduce.map(p => `
+                                <div class="produce-card">
+                                    <div class="produce-image">
+                                        ${p.emoji}
+                                        <span class="badge badge-${p.grade === 'A' ? 'success' : 'warning'} produce-badge">Grade ${p.grade}</span>
+                                    </div>
+                                    <div class="produce-details">
+                                        <div class="produce-title">${p.title}</div>
+                                        <div class="produce-farmer"><i class="fas fa-map-pin"></i> ${p.farmerLocation}</div>
+                                        <div class="produce-price">KES ${p.price} <span>/ ${p.unit}</span></div>
+                                        <div class="produce-meta">
+                                            <span><i class="fas fa-weight-hanging"></i> ${p.available} ${p.unit} avail</span>
+                                            <span><i class="fas fa-clock"></i> ${p.freshness}</span>
+                                        </div>
+                                        <div class="produce-actions">
+                                            <button class="btn btn-outline btn-sm" onclick="editProduce('${p.id}')">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-ghost btn-sm" onclick="deleteProduce('${p.id}')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        function openAddProduceModal() {
+            const categories = ['vegetables', 'fruits', 'grains', 'dairy', 'other'];
+            const emojis = { vegetables: '🥬', fruits: '🍎', grains: '🌾', dairy: '🥛', other: '📦' };
+
+            showModal('Add New Produce', `
+                <form id="addProduceForm" onsubmit="handleAddProduce(event)">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Produce Name</label>
+                            <input type="text" class="form-input" id="prodTitle" placeholder="e.g. Fresh Tomatoes" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" id="prodCategory" required>
+                                ${categories.map(c => `<option value="${c}">${c.charAt(0).toUpperCase() + c.slice(1)}</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Price (KES)</label>
+                            <input type="number" class="form-input" id="prodPrice" placeholder="45" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Unit</label>
+                            <select class="form-select" id="prodUnit" required>
+                                <option value="kg">Kilogram (kg)</option>
+                                <option value="bunch">Bunch</option>
+                                <option value="piece">Piece</option>
+                                <option value="crate">Crate</option>
+                                <option value="punnet">Punnet</option>
+                                <option value="bag">Bag</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Total Quantity</label>
+                            <input type="number" class="form-input" id="prodQty" placeholder="100" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Grade</label>
+                            <select class="form-select" id="prodGrade" required>
+                                <option value="A">Grade A (Premium)</option>
+                                <option value="B">Grade B (Standard)</option>
+                                <option value="C">Grade C (Economy)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-textarea" id="prodDesc" placeholder="Describe your produce..." required></textarea>
+                    </div>
+                </form>
+            `, `
+                <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="document.getElementById('addProduceForm').dispatchEvent(new Event('submit'))">
+                    <i class="fas fa-plus"></i> Add Listing
+                </button>
+            `);
+        }
+
+        function handleAddProduce(e) {
+            e.preventDefault();
+            const user = Store.currentUser;
+            const emojis = { vegetables: '🥬', fruits: '🍎', grains: '🌾', dairy: '🥛', other: '📦' };
+
+            const produce = {
+                id: `p_${Date.now()}`,
+                farmerId: user.id,
+                farmerName: user.name,
+                farmerLocation: user.location,
+                title: document.getElementById('prodTitle').value,
+                category: document.getElementById('prodCategory').value,
+                emoji: emojis[document.getElementById('prodCategory').value] || '📦',
+                grade: document.getElementById('prodGrade').value,
+                price: parseInt(document.getElementById('prodPrice').value),
+                unit: document.getElementById('prodUnit').value,
+                quantity: parseInt(document.getElementById('prodQty').value),
+                available: parseInt(document.getElementById('prodQty').value),
+                description: document.getElementById('prodDesc').value,
+                freshness: 'Today',
+                status: 'available',
+                createdAt: new Date().toISOString()
+            };
+
+            Store.produce.push(produce);
+            Store.save();
+            closeModal();
+            showToast('Produce listed successfully!', 'success');
+            navigateTo('my-produce');
+        }
+
+        function deleteProduce(id) {
+            if (!confirm('Are you sure you want to delete this listing?')) return;
+            Store.produce = Store.produce.filter(p => p.id !== id);
+            Store.save();
+            showToast('Listing deleted', 'success');
+            navigateTo('my-produce');
+        }
+
+        // ==================== VENDOR DASHBOARD ====================
+        function renderVendorDashboard() {
+            const myOrders = Store.orders.filter(o => o.vendorId === Store.currentUser.id);
+            const totalSpent = myOrders.reduce((sum, o) => sum + o.total, 0);
+            const activeOrders = myOrders.filter(o => o.status !== 'delivered').length;
+
+            return `
+                <div class="animate-fade">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value">${activeOrders}</div>
+                                    <div class="stat-label">Active Orders</div>
+                                </div>
+                                <div class="stat-icon blue"><i class="fas fa-shopping-bag"></i></div>
+                            </div>
+                            <div class="stat-trend up">${myOrders.filter(o => o.status === 'delivered').length} completed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value">KES ${totalSpent.toLocaleString()}</div>
+                                    <div class="stat-label">Total Spent</div>
+                                </div>
+                                <div class="stat-icon yellow"><i class="fas fa-money-bill-wave"></i></div>
+                            </div>
+                            <div class="stat-trend up">15% under budget</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value">96%</div>
+                                    <div class="stat-label">Waste Reduction</div>
+                                </div>
+                                <div class="stat-icon green"><i class="fas fa-recycle"></i></div>
+                            </div>
+                            <div class="stat-trend up">Best month yet</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value">4.8</div>
+                                    <div class="stat-label">Supplier Rating</div>
+                                </div>
+                                <div class="stat-icon orange"><i class="fas fa-star"></i></div>
+                            </div>
+                            <div class="stat-trend up">Top 10% buyer</div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="card">
+                            <div class="content-header">
+                                <h2><i class="fas fa-bolt"></i> Smart Reorder</h2>
+                            </div>
+                            <div style="background: rgba(249,168,37,0.1); border-radius: var(--radius-sm); padding: 1.25rem; border-left: 4px solid var(--secondary);">
+                                <h4 style="margin-bottom: 0.5rem;"><i class="fas fa-bell"></i> Low Stock Alert</h4>
+                                <p style="font-size: 0.9rem; margin-bottom: 1rem;">Your tomato inventory will drop below safety stock (50kg) in <strong>2 days</strong>. Based on your sales velocity, we recommend ordering <strong>200kg</strong> from James Mwangi.</p>
+                                <div style="display: flex; gap: 0.75rem;">
+                                    <button class="btn btn-secondary btn-sm" onclick="quickReorder()">
+                                        <i class="fas fa-check"></i> Approve Reorder
+                                    </button>
+                                    <button class="btn btn-ghost btn-sm" onclick="navigateTo('marketplace')">
+                                        Browse More
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="content-header">
+                                <h2><i class="fas fa-clock-rotate-left"></i> Recent Orders</h2>
+                                <button class="btn btn-ghost btn-sm" onclick="navigateTo('orders')">View All</button>
+                            </div>
+                            ${myOrders.length === 0 ? '<div class="empty-state"><i class="fas fa-clipboard"></i><h3>No orders yet</h3></div>' :
+                                `<div class="order-list">
+                                    ${myOrders.slice(0, 3).map(o => `
+                                        <div class="order-card">
+                                            <div class="order-info">
+                                                <h4>Order #${o.id.slice(-4).toUpperCase()}</h4>
+                                                <p>${o.items.map(i => i.title).join(', ')}</p>
+                                                <p style="margin-top: 0.3rem;"><i class="fas fa-user"></i> ${o.farmerId === 'farmer_1' ? 'James Mwangi' : 'Farmer'}</p>
+                                            </div>
+                                            <div class="order-meta">
+                                                <div class="order-price">KES ${o.total.toLocaleString()}</div>
+                                                <span class="badge badge-${o.status === 'delivered' ? 'success' : o.status === 'in_transit' ? 'warning' : 'info'}">${formatStatus(o.status)}</span>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>`
+                            }
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function quickReorder() {
+            const tomatoes = Store.produce.find(p => p.title.includes('Tomato'));
+            if (tomatoes) {
+                addToCart(tomatoes.id, 200);
+                showToast('200kg Tomatoes added to cart!', 'success');
+                toggleCart();
+            }
+        }
+
+        // ==================== MARKETPLACE ====================
+        function renderMarketplace() {
+            const available = Store.produce.filter(p => p.status === 'available' && p.available > 0);
+            return `
+                <div class="animate-fade">
+                    <div class="content-header">
+                        <div>
+                            <h2><i class="fas fa-store"></i> Fresh Produce Marketplace</h2>
+                            <p style="color: var(--gray); font-size: 0.9rem; margin-top: 0.25rem;">${available.length} listings available today</p>
+                        </div>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Search produce..." id="marketSearch" onkeyup="filterMarketplace()">
+                        </div>
+                    </div>
+
+                    <div class="produce-grid" id="marketplaceGrid">
+                        ${available.map(p => `
+                            <div class="produce-card" data-name="${p.title.toLowerCase()}" data-category="${p.category}">
+                                <div class="produce-image" style="background: linear-gradient(135deg, ${getCategoryColor(p.category)}, ${getCategoryColor(p.category, true)});">
+                                    ${p.emoji}
+                                    <span class="badge badge-${p.grade === 'A' ? 'success' : 'warning'} produce-badge">Grade ${p.grade}</span>
+                                </div>
+                                <div class="produce-details">
+                                    <div class="produce-title">${p.title}</div>
+                                    <div class="produce-farmer"><i class="fas fa-user"></i> ${p.farmerName} • <i class="fas fa-map-pin"></i> ${p.farmerLocation}</div>
+                                    <div class="produce-price">KES ${p.price} <span>/ ${p.unit}</span></div>
+                                    <div class="produce-meta">
+                                        <span><i class="fas fa-weight-hanging"></i> ${p.available} ${p.unit}</span>
+                                        <span><i class="fas fa-clock"></i> ${p.freshness}</span>
+                                    </div>
+                                    <div class="produce-actions">
+                                        <button class="btn btn-primary btn-sm" onclick="addToCart('${p.id}', 1)">
+                                            <i class="fas fa-cart-plus"></i> Add
+                                        </button>
+                                        <button class="btn btn-outline btn-sm" onclick="viewProduceDetails('${p.id}')">
+                                            <i class="fas fa-eye"></i> View
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function filterMarketplace() {
+            const query = document.getElementById('marketSearch').value.toLowerCase();
+            document.querySelectorAll('#marketplaceGrid .produce-card').forEach(card => {
+                const name = card.dataset.name;
+                card.style.display = name.includes(query) ? '' : 'none';
+            });
+        }
+
+        function getCategoryColor(cat, light) {
+            const colors = {
+                vegetables: light ? '#4CAF50' : '#2E7D32',
+                fruits: light ? '#FF7043' : '#E64A19',
+                grains: light ? '#FFD54F' : '#FFA000',
+                dairy: light ? '#4FC3F7' : '#0288D1',
+                other: light ? '#BDBDBD' : '#757575'
+            };
+            return colors[cat] || colors.other;
+        }
+
+        function viewProduceDetails(id) {
+            const p = Store.produce.find(x => x.id === id);
+            if (!p) return;
+
+            showModal(p.title, `
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <div style="font-size: 5rem; margin-bottom: 1rem;">${p.emoji}</div>
+                    <div class="badge badge-${p.grade === 'A' ? 'success' : 'warning'}">Grade ${p.grade}</div>
+                </div>
+                <div class="grid-2" style="margin-bottom: 1rem;">
+                    <div><strong>Price:</strong> KES ${p.price}/${p.unit}</div>
+                    <div><strong>Available:</strong> ${p.available} ${p.unit}</div>
+                    <div><strong>Farmer:</strong> ${p.farmerName}</div>
+                    <div><strong>Location:</strong> ${p.farmerLocation}</div>
+                </div>
+                <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: 1rem;">${p.description}</p>
+                <div style="background: var(--light); padding: 1rem; border-radius: var(--radius-sm);">
+                    <strong>Freshness:</strong> ${p.freshness} • <strong>Quality Score:</strong> ${p.grade === 'A' ? '96%' : '84%'}
+                </div>
+                <div class="form-group mt-1">
+                    <label class="form-label">Quantity (${p.unit})</label>
+                    <input type="number" class="form-input" id="detailQty" value="10" min="1" max="${p.available}">
+                </div>
+            `, `
+                <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+                <button class="btn btn-primary" onclick="addToCartFromModal('${p.id}')">
+                    <i class="fas fa-cart-plus"></i> Add to Cart
+                </button>
+            `);
+        }
+
+        function addToCartFromModal(id) {
+            const qty = parseInt(document.getElementById('detailQty').value) || 1;
+            addToCart(id, qty);
+            closeModal();
+        }
+
+        // ==================== CART FUNCTIONS ====================
+        function addToCart(produceId, qty) {
+            const p = Store.produce.find(x => x.id === produceId);
+            if (!p) return;
+
+            const existing = Store.cart.find(item => item.produceId === produceId);
+            if (existing) {
+                existing.qty += qty;
+            } else {
+                Store.cart.push({
+                    produceId: p.id,
+                    title: p.title,
+                    price: p.price,
+                    unit: p.unit,
+                    qty: qty,
+                    farmerId: p.farmerId,
+                    farmerName: p.farmerName,
+                    emoji: p.emoji
+                });
+            }
+            Store.save();
+            updateCartUI();
+            showToast(`${p.title} added to cart`, 'success');
+        }
+
+        function updateCartUI() {
+            const cartBody = document.getElementById('cartBody');
+            const cartFooter = document.getElementById('cartFooter');
+            const cartDot = document.getElementById('cartDot');
+
+            if (Store.cart.length === 0) {
+                cartBody.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-shopping-basket"></i>
+                        <h3>Cart is empty</h3>
+                        <p>Browse produce and add items to your cart</p>
+                    </div>
+                `;
+                cartFooter.style.display = 'none';
+                cartDot.classList.add('hidden');
+            } else {
+                cartDot.classList.remove('hidden');
+                cartFooter.style.display = 'block';
+
+                cartBody.innerHTML = Store.cart.map(item => `
+                    <div class="cart-item">
+                        <div class="cart-item-img">${item.emoji}</div>
+                        <div class="cart-item-details">
+                            <div class="cart-item-title">${item.title}</div>
+                            <div class="cart-item-price">KES ${item.price} / ${item.unit}</div>
+                            <div class="cart-item-qty">
+                                <button class="qty-btn" onclick="updateCartQty('${item.produceId}', -1)">-</button>
+                                <span>${item.qty}</span>
+                                <button class="qty-btn" onclick="updateCartQty('${item.produceId}', 1)">+</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-ghost btn-sm" onclick="removeFromCart('${item.produceId}')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `).join('');
+
+                const total = Store.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+                document.getElementById('cartTotal').textContent = `KES ${total.toLocaleString()}`;
+            }
+        }
+
+        function updateCartQty(produceId, delta) {
+            const item = Store.cart.find(i => i.produceId === produceId);
+            if (!item) return;
+            item.qty += delta;
+            if (item.qty <= 0) {
+                Store.cart = Store.cart.filter(i => i.produceId !== produceId);
+            }
+            Store.save();
+            updateCartUI();
+        }
+
+        function removeFromCart(produceId) {
+            Store.cart = Store.cart.filter(i => i.produceId !== produceId);
+            Store.save();
+            updateCartUI();
+            showToast('Item removed from cart', 'info');
+        }
+
+        function toggleCart() {
+            document.getElementById('cartSidebar').classList.toggle('open');
+            document.getElementById('cartOverlay').classList.toggle('active');
+        }
+
+        function checkout() {
+            if (Store.cart.length === 0) return;
+
+            const total = Store.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const farmerId = Store.cart[0].farmerId;
+            const farmerName = Store.cart[0].farmerName;
+
+            showModal('Confirm Order', `
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <i class="fas fa-mobile-alt" style="font-size: 3rem; color: var(--primary);"></i>
+                    <h3 style="margin-top: 1rem;">Pay with M-Pesa</h3>
+                    <p style="color: var(--gray); font-size: 0.9rem;">You will receive an STK push on your phone</p>
+                </div>
+                <div class="card" style="margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>Subtotal</span>
+                        <span>KES ${total.toLocaleString()}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>Transport</span>
+                        <span>KES 2,500</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; border-top: 1px solid var(--gray-light); padding-top: 0.5rem;">
+                        <span>Total</span>
+                        <span>KES ${(total + 2500).toLocaleString()}</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">M-Pesa Number</label>
+                    <input type="tel" class="form-input" value="${Store.currentUser.phone}" id="mpesaPhone">
+                </div>
+            `, `
+                <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="processPayment('${farmerId}', '${farmerName}', ${total})">
+                    <i class="fas fa-lock"></i> Pay KES ${(total + 2500).toLocaleString()}
+                </button>
+            `);
+        }
+
+        function processPayment(farmerId, farmerName, total) {
+            closeModal();
+            toggleCart();
+
+            // Simulate payment processing
+            showToast('M-Pesa STK push sent to your phone...', 'info');
+
+            setTimeout(() => {
+                const order = {
+                    id: `o_${Date.now()}`,
+                    vendorId: Store.currentUser.id,
+                    vendorName: Store.currentUser.name,
+                    farmerId: farmerId,
+                    items: Store.cart.map(item => ({
+                        produceId: item.produceId,
+                        title: item.title,
+                        qty: item.qty,
+                        price: item.price,
+                        total: item.price * item.qty
+                    })),
+                    total: total + 2500,
+                    status: 'pending',
+                    transportId: null,
+                    transportStatus: 'pending',
+                    createdAt: new Date().toISOString(),
+                    deliveryDate: null
+                };
+
+                Store.orders.push(order);
+
+                // Update produce availability
+                Store.cart.forEach(item => {
+                    const p = Store.produce.find(x => x.id === item.produceId);
+                    if (p) p.available -= item.qty;
+                });
+
+                // Add notification
+                Store.notifications.unshift({
+                    id: `n_${Date.now()}`,
+                    userId: Store.currentUser.id,
+                    title: 'Order Placed Successfully',
+                    text: `Your order #${order.id.slice(-4).toUpperCase()} has been placed. Waiting for farmer confirmation.`,
+                    time: 'Just now',
+                    read: false
+                });
+
+                Store.cart = [];
+                Store.save();
+                updateCartUI();
+                updateNotifications();
+                showToast('Payment successful! Order placed.', 'success');
+                navigateTo('orders');
+            }, 2000);
+        }
+
+        // ==================== ORDERS ====================
+        function renderOrders() {
+            const user = Store.currentUser;
+            const myOrders = Store.orders.filter(o => 
+                (user.role === 'farmer' && o.farmerId === user.id) ||
+                (user.role === 'vendor' && o.vendorId === user.id)
+            ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            return `
+                <div class="animate-fade">
+                    <div class="content-header">
+                        <h2><i class="fas fa-clipboard-list"></i> ${user.role === 'farmer' ? 'Incoming Orders' : 'My Orders'}</h2>
+                        ${user.role === 'vendor' ? `<button class="btn btn-primary" onclick="navigateTo('marketplace')"><i class="fas fa-plus"></i> New Order</button>` : ''}
+                    </div>
+
+                    ${myOrders.length === 0 ? `
+                        <div class="card empty-state">
+                            <i class="fas fa-clipboard"></i>
+                            <h3>No orders yet</h3>
+                            <p>${user.role === 'farmer' ? 'Orders will appear here when vendors buy your produce' : 'Start shopping in the marketplace'}</p>
+                        </div>
+                    ` : `
+                        <div class="card">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Items</th>
+                                        <th>${user.role === 'farmer' ? 'Vendor' : 'Farmer'}</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${myOrders.map(o => `
+                                        <tr>
+                                            <td><strong>#${o.id.slice(-4).toUpperCase()}</strong></td>
+                                            <td>${o.items.map(i => `${i.title} (${i.qty})`).join('<br>')}</td>
+                                            <td>${user.role === 'farmer' ? o.vendorName : (o.farmerId === 'farmer_1' ? 'James Mwangi' : 'Farmer')}</td>
+                                            <td><strong>KES ${o.total.toLocaleString()}</strong></td>
+                                            <td><span class="badge badge-${o.status === 'delivered' ? 'success' : o.status === 'in_transit' ? 'warning' : o.status === 'pending' ? 'info' : 'primary'}">${formatStatus(o.status)}</span></td>
+                                            <td>
+                                                ${user.role === 'farmer' && o.status === 'pending' ? `
+                                                    <button class="btn btn-primary btn-sm" onclick="acceptOrder('${o.id}')">
+                                                        <i class="fas fa-check"></i> Accept
+                                                    </button>
+                                                ` : ''}
+                                                ${o.status === 'in_transit' ? `
+                                                    <button class="btn btn-outline btn-sm" onclick="navigateTo('tracking')">
+                                                        <i class="fas fa-map"></i> Track
+                                                    </button>
+                                                ` : ''}
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        function acceptOrder(orderId) {
+            const order = Store.orders.find(o => o.id === orderId);
+            if (!order) return;
+            order.status = 'accepted';
+            order.transportStatus = 'pending';
+            Store.save();
+            showToast('Order accepted! Now find transport.', 'success');
+
+            // Notify vendor
+            Store.notifications.unshift({
+                id: `n_${Date.now()}`,
+                userId: order.vendorId,
+                title: 'Order Accepted',
+                text: `Farmer has accepted your order #${order.id.slice(-4).toUpperCase()}. Arranging transport now.`,
+                time: 'Just now',
+                read: false
+            });
+            Store.save();
+            navigateTo('orders');
+        }
+
+        // ==================== TRANSPORT / LOADS ====================
+        function renderTransport() {
+            return renderLoads();
+        }
+
+        function renderLoads() {
+            const user = Store.currentUser;
+            const isTransporter = user.role === 'transporter';
+            const available = Store.transports.filter(t => t.status === 'available');
+
+            return `
+                <div class="animate-fade">
+                    <div class="content-header">
+                        <h2><i class="fas fa-truck"></i> ${isTransporter ? 'Available Loads' : 'Find Transport'}</h2>
+                        ${isTransporter ? '' : `<button class="btn btn-primary" onclick="requestTransport()"><i class="fas fa-plus"></i> Request Transport</button>`}
+                    </div>
+
+                    ${available.length === 0 ? `
+                        <div class="card empty-state">
+                            <i class="fas fa-truck"></i>
+                            <h3>No transport available</h3>
+                            <p>Check back later or request a new transport job</p>
+                        </div>
+                    ` : `
+                        ${available.map(t => `
+                            <div class="transport-card">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                                    <div>
+                                        <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem;">
+                                            <i class="fas fa-${t.type === 'refrigerated' ? 'snowflake' : t.type === 'backhaul' ? 'recycle' : 'truck'}"></i>
+                                            ${t.type === 'backhaul' ? 'Backhaul Load' : 'Standard Delivery'}
+                                        </h3>
+                                        <p style="font-size: 0.85rem; color: var(--gray);">
+                                            <i class="fas fa-user"></i> ${t.transporterName} • 
+                                            <i class="fas fa-star" style="color: var(--secondary);"></i> ${t.rating} • 
+                                            ${t.trips} trips
+                                        </p>
+                                    </div>
+                                    <div class="badge badge-${t.type === 'refrigerated' ? 'info' : t.type === 'backhaul' ? 'success' : 'primary'}">${t.type}</div>
+                                </div>
+
+                                <div class="transport-route">
+                                    <div class="route-point">
+                                        <div class="city">${t.from}</div>
+                                        <div class="time">Pickup</div>
+                                    </div>
+                                    <div class="route-arrow">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </div>
+                                    <div class="route-point">
+                                        <div class="city">${t.to}</div>
+                                        <div class="time">Delivery</div>
+                                    </div>
+                                </div>
+
+                                <div class="transport-details">
+                                    <div class="detail-item">
+                                        <div class="label">Vehicle</div>
+                                        <div class="value">${t.vehicle}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="label">Capacity</div>
+                                        <div class="value">${t.capacity}kg</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="label">Distance</div>
+                                        <div class="value">${t.distance}km</div>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary);">KES ${t.price.toLocaleString()}</div>
+                                        <div style="font-size: 0.8rem; color: var(--gray);">Est. ${t.duration}</div>
+                                    </div>
+                                    <div>
+                                        ${isTransporter ? `
+                                            <button class="btn btn-primary" onclick="acceptLoad('${t.id}')">
+                                                <i class="fas fa-check"></i> Accept Load
+                                            </button>
+                                        ` : `
+                                            <button class="btn btn-primary" onclick="bookTransport('${t.id}')">
+                                                <i class="fas fa-book"></i> Book Now
+                                            </button>
+                                        `}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    `}
+                </div>
+            `;
+        }
+
+        function acceptLoad(transportId) {
+            const t = Store.transports.find(x => x.id === transportId);
+            if (!t) return;
+            t.status = 'accepted';
+            t.transporterId = Store.currentUser.id;
+            Store.save();
+            showToast('Load accepted! Head to pickup location.', 'success');
+            navigateTo('my-jobs');
+        }
+
+        function bookTransport(transportId) {
+            const t = Store.transports.find(x => x.id === transportId);
+            if (!t) return;
+            showToast(`Transport booked with ${t.transporterName}!`, 'success');
+        }
+
+        // ==================== TRACKING ====================
+        function renderTracking() {
+            const user = Store.currentUser;
+            const activeOrders = Store.orders.filter(o => 
+                o.status === 'in_transit' && 
+                ((user.role === 'vendor' && o.vendorId === user.id) ||
+                 (user.role === 'farmer' && o.farmerId === user.id))
+            );
+
+            const order = activeOrders[0] || Store.orders.find(o => o.status === 'in_transit');
+
+            if (!order) {
+                return `
+                    <div class="animate-fade">
+                        <div class="content-header">
+                            <h2><i class="fas fa-map-marker-alt"></i> Live Tracking</h2>
+                        </div>
+                        <div class="card empty-state">
+                            <i class="fas fa-box-open"></i>
+                            <h3>No active deliveries</h3>
+                            <p>Your deliveries will appear here once transport is arranged</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="animate-fade">
+                    <div class="content-header">
+                        <h2><i class="fas fa-map-marker-alt"></i> Live Tracking</h2>
+                        <span class="badge badge-warning"><i class="fas fa-clock"></i> In Transit</span>
+                    </div>
+
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <div>
+                                <h3 style="font-size: 1.1rem;">Order #${order.id.slice(-4).toUpperCase()}</h3>
+                                <p style="color: var(--gray); font-size: 0.9rem;">${order.items.map(i => i.title).join(', ')}</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 1.3rem; font-weight: 700; color: var(--primary);">KES ${order.total.toLocaleString()}</div>
+                                <div style="font-size: 0.85rem; color: var(--gray);">Paid via M-Pesa</div>
+                            </div>
+                        </div>
+
+                        <div class="tracking-map">
+                            <div class="map-road"></div>
+                            <div class="map-stop start" title="Kiambu Farm"></div>
+                            <div class="map-truck" title="Truck KBU 123X"><i class="fas fa-truck"></i></div>
+                            <div class="map-stop end" title="Nairobi Market"></div>
+                            <div class="map-label"><i class="fas fa-clock"></i> ETA: 34 minutes</div>
+                        </div>
+
+                        <div class="grid-3" style="margin-bottom: 1.5rem;">
+                            <div class="card" style="text-align: center;">
+                                <i class="fas fa-truck" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
+                                <div style="font-weight: 700;">Isuzu FRR</div>
+                                <div style="font-size: 0.8rem; color: var(--gray);">KBU 123X</div>
+                            </div>
+                            <div class="card" style="text-align: center;">
+                                <i class="fas fa-user" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
+                                <div style="font-weight: 700;">Peter Kimani</div>
+                                <div style="font-size: 0.8rem; color: var(--gray);">Driver • 4.9 ★</div>
+                            </div>
+                            <div class="card" style="text-align: center;">
+                                <i class="fas fa-thermometer-half" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
+                                <div style="font-weight: 700;">18°C</div>
+                                <div style="font-size: 0.8rem; color: var(--gray);">Cargo Temp</div>
+                            </div>
+                        </div>
+
+                        <h3 style="margin-bottom: 1rem;"><i class="fas fa-tasks"></i> Delivery Progress</h3>
+                        <div class="timeline">
+                            <div class="timeline-item completed">
+                                <h4>Order Confirmed</h4>
+                                <p>Vendor ordered 200kg tomatoes</p>
+                                <div class="time"><i class="fas fa-clock"></i> Today, 6:00 AM</div>
+                            </div>
+                            <div class="timeline-item completed">
+                                <h4>Farmer Prepared</h4>
+                                <p>James Mwangi graded and packed Grade A produce</p>
+                                <div class="time"><i class="fas fa-clock"></i> Today, 8:30 AM</div>
+                            </div>
+                            <div class="timeline-item completed">
+                                <h4>Transport Assigned</h4>
+                                <p>Truck KBU 123X assigned via smart matching</p>
+                                <div class="time"><i class="fas fa-clock"></i> Today, 9:00 AM</div>
+                            </div>
+                            <div class="timeline-item completed">
+                                <h4>Picked Up</h4>
+                                <p>Quality verified. Temperature: 18°C. Photos uploaded.</p>
+                                <div class="time"><i class="fas fa-clock"></i> Today, 10:15 AM</div>
+                            </div>
+                            <div class="timeline-item active">
+                                <h4>In Transit</h4>
+                                <p>Currently on Kiambu Road. 12km to destination. Temp stable.</p>
+                                <div class="time"><i class="fas fa-clock"></i> Now</div>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>Delivery & Quality Check</h4>
+                                <p>Pending vendor confirmation and escrow release</p>
+                                <div class="time"><i class="fas fa-clock"></i> Expected: 11:30 AM</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==================== TRANSPORTER DASHBOARD ====================
+        function renderTransporterDashboard() {
+            const myJobs = Store.transports.filter(t => t.transporterId === Store.currentUser.id && t.status !== 'available');
+            const earnings = myJobs.reduce((sum, t) => sum + t.price, 0);
+
+            return `
+                <div class="animate-fade">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value">${myJobs.length}</div>
+                                    <div class="stat-label">Active Jobs</div>
+                                </div>
+                                <div class="stat-icon blue"><i class="fas fa-route"></i></div>
+                            </div>
+                            <div class="stat-trend up">2 completing today</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value">KES ${earnings.toLocaleString()}</div>
+                                    <div class="stat-label">This Week</div>
+                                </div>
+                                <div class="stat-icon yellow"><i class="fas fa-wallet"></i></div>
+                            </div>
+                            <div class="stat-trend up">+18% with backhauls</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value">87%</div>
+                                    <div class="stat-label">Utilization</div>
+                                </div>
+                                <div class="stat-icon green"><i class="fas fa-chart-pie"></i></div>
+                            </div>
+                            <div class="stat-trend up">Industry avg: 52%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value">4.9</div>
+                                    <div class="stat-label">Rating</div>
+                                </div>
+                                <div class="stat-icon orange"><i class="fas fa-star"></i></div>
+                            </div>
+                            <div class="stat-trend up">Top rated carrier</div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="card">
+                            <div class="content-header">
+                                <h2><i class="fas fa-bolt"></i> Smart Load Alert</h2>
+                            </div>
+                            <div style="background: rgba(0,200,83,0.05); border-radius: var(--radius-sm); padding: 1.25rem; border-left: 4px solid var(--success);">
+                                <h4 style="color: var(--success); margin-bottom: 0.5rem;"><i class="fas fa-recycle"></i> Backhaul Opportunity</h4>
+                                <p style="font-size: 0.9rem; margin-bottom: 1rem;">You have a delivery to Nairobi tomorrow. A fertilizer supplier needs 2 tons moved to Nakuru — perfect backhaul to cover your fuel costs + KES 8,500 profit.</p>
+                                <button class="btn btn-success btn-sm" style="background: var(--success); color: white;" onclick="navigateTo('loads')">
+                                    <i class="fas fa-check"></i> Accept Backhaul
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="content-header">
+                                <h2><i class="fas fa-route"></i> Today's Route</h2>
+                            </div>
+                            <div class="transport-route" style="margin-bottom: 0;">
+                                <div class="route-point">
+                                    <div class="city">Kiambu</div>
+                                    <div class="time">10:00 AM</div>
+                                </div>
+                                <div class="route-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                                <div class="route-point">
+                                    <div class="city">Nairobi</div>
+                                    <div class="time">11:30 AM</div>
+                                </div>
+                            </div>
+                            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--gray-light);">
+                                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                                    <span><i class="fas fa-weight-hanging"></i> 800kg Tomatoes</span>
+                                    <span><i class="fas fa-money-bill"></i> KES 3,500</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMyJobs() {
+            const myJobs = Store.transports.filter(t => t.transporterId === Store.currentUser.id);
+            return `
+                <div class="animate-fade">
+                    <div class="content-header">
+                        <h2><i class="fas fa-route"></i> My Jobs</h2>
+                        <button class="btn btn-primary" onclick="navigateTo('loads')"><i class="fas fa-search"></i> Find Loads</button>
+                    </div>
+
+                    ${myJobs.length === 0 ? `
+                        <div class="card empty-state">
+                            <i class="fas fa-box-open"></i>
+                            <h3>No active jobs</h3>
+                            <p>Browse available loads to start earning</p>
+                        </div>
+                    ` : `
+                        ${myJobs.map(t => `
+                            <div class="transport-card">
+                                <div class="transport-route">
+                                    <div class="route-point">
+                                        <div class="city">${t.from}</div>
+                                        <div class="time">Pickup</div>
+                                    </div>
+                                    <div class="route-arrow">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </div>
+                                    <div class="route-point">
+                                        <div class="city">${t.to}</div>
+                                        <div class="time">Delivery</div>
+                                    </div>
+                                </div>
+                                <div class="transport-details">
+                                    <div class="detail-item"><div class="label">Status</div><div class="value">${t.status}</div></div>
+                                    <div class="detail-item"><div class="label">Earning</div><div class="value">KES ${t.price.toLocaleString()}</div></div>
+                                    <div class="detail-item"><div class="label">Distance</div><div class="value">${t.distance}km</div></div>
+                                </div>
+                                <div style="display: flex; gap: 0.75rem;">
+                                    <button class="btn btn-primary btn-sm" onclick="updateJobStatus('${t.id}', 'picked_up')">
+                                        <i class="fas fa-box"></i> Mark Picked Up
+                                    </button>
+                                    <button class="btn btn-success btn-sm" style="background: var(--success); color: white;" onclick="updateJobStatus('${t.id}', 'delivered')">
+                                        <i class="fas fa-check"></i> Mark Delivered
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    `}
+                </div>
+            `;
+        }
+
+        function updateJobStatus(jobId, status) {
+            const job = Store.transports.find(t => t.id === jobId);
+            if (!job) return;
+
+            if (status === 'delivered') {
+                job.status = 'completed';
+                // Find associated order and mark delivered
+                const order = Store.orders.find(o => o.transportId === jobId || o.transportId === 'trans_1');
+                if (order) {
+                    order.status = 'delivered';
+                    order.transportStatus = 'completed';
+                }
+                showToast('Delivery completed! Payment released to your M-Pesa.', 'success');
+            } else {
+                job.status = status;
+                showToast(`Status updated to: ${status.replace('_', ' ')}`, 'success');
+            }
+            Store.save();
+            navigateTo('my-jobs');
+        }
+
+        function renderEarnings() {
+            return `
+                <div class="animate-fade">
+                    <div class="content-header">
+                        <h2><i class="fas fa-wallet"></i> Earnings</h2>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value">KES 156,000</div>
+                                    <div class="stat-label">This Month</div>
+                                </div>
+                                <div class="stat-icon green"><i class="fas fa-money-bill-wave"></i></div>
+                            </div>
+                            <div class="stat-trend up">+24% vs last month</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value">KES 12,400</div>
+                                    <div class="stat-label">This Week</div>
+                                </div>
+                                <div class="stat-icon blue"><i class="fas fa-calendar-week"></i></div>
+                            </div>
+                            <div class="stat-trend up">+8% vs last week</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value">42</div>
+                                    <div class="stat-label">Trips</div>
+                                </div>
+                                <div class="stat-icon yellow"><i class="fas fa-route"></i></div>
+                            </div>
+                            <div class="stat-trend up">12 backhauls</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value">KES 3,714</div>
+                                    <div class="stat-label">Avg per Trip</div>
+                                </div>
+                                <div class="stat-icon orange"><i class="fas fa-chart-line"></i></div>
+                            </div>
+                            <div class="stat-trend up">+15% efficiency</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="margin-bottom: 1rem;"><i class="fas fa-history"></i> Recent Transactions</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>Date</th><th>Route</th><th>Type</th><th>Amount</th><th>Status</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Today</td><td>Kiambu → Nairobi</td><td>Standard</td><td><strong>KES 3,500</strong></td><td><span class="badge badge-success">Paid</span></td></tr>
+                                <tr><td>Yesterday</td><td>Nairobi → Nakuru</td><td>Backhaul</td><td><strong>KES 8,500</strong></td><td><span class="badge badge-success">Paid</span></td></tr>
+                                <tr><td>Jun 28</td><td>Limuru → Nairobi</td><td>Standard</td><td><strong>KES 4,200</strong></td><td><span class="badge badge-success">Paid</span></td></tr>
+                                <tr><td>Jun 27</td><td>Nairobi → Thika</td><td>Standard</td><td><strong>KES 5,000</strong></td><td><span class="badge badge-success">Paid</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderVehicle() {
+            return `
+                <div class="animate-fade">
+                    <div class="content-header">
+                        <h2><i class="fas fa-truck-moving"></i> My Vehicle</h2>
+                        <button class="btn btn-outline btn-sm"><i class="fas fa-edit"></i> Edit Details</button>
+                    </div>
+                    <div class="grid-2">
+                        <div class="card" style="text-align: center;">
+                            <i class="fas fa-truck" style="font-size: 4rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                            <h3>Isuzu FRR Truck</h3>
+                            <p style="color: var(--gray);">Registration: KBU 123X</p>
+                            <div style="margin-top: 1rem;">
+                                <span class="badge badge-success">Active</span>
+                                <span class="badge badge-primary">5 Ton Capacity</span>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h3 style="margin-bottom: 1rem;"><i class="fas fa-info-circle"></i> Vehicle Details</h3>
+                            <div style="display: grid; gap: 0.75rem;">
+                                <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--gray-light);">
+                                    <span style="color: var(--gray);">Type</span><span style="font-weight: 600;">Refrigerated Box Truck</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--gray-light);">
+                                    <span style="color: var(--gray);">Capacity</span><span style="font-weight: 600;">5,000 kg</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--gray-light);">
+                                    <span style="color: var(--gray);">Insurance</span><span class="badge badge-success">Valid</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--gray-light);">
+                                    <span style="color: var(--gray);">License</span><span class="badge badge-success">Valid till Dec 2026</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding: 0.75rem 0;">
+                                    <span style="color: var(--gray);">IoT Sensors</span><span class="badge badge-primary">Temp + GPS Active</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==================== MARKET PRICES ====================
+        function renderMarketPrices() {
+            const prices = [
+                { item: 'Tomatoes', price: 45, trend: '+12%', location: 'Nairobi', emoji: '🍅' },
+                { item: 'Onions', price: 60, trend: '+5%', location: 'Nairobi', emoji: '🧅' },
+                { item: 'Sukuma Wiki', price: 25, trend: '-3%', location: 'Nairobi', emoji: '🥬' },
+                { item: 'Carrots', price: 35, trend: '+8%', location: 'Nairobi', emoji: '🥕' },
+                { item: 'Bananas', price: 15, trend: '0%', location: 'Nairobi', emoji: '🍌' },
+                { item: 'Strawberries', price: 120, trend: '+20%', location: 'Nairobi', emoji: '🍓' },
+                { item: 'Potatoes', price: 55, trend: '-5%', location: 'Nairobi', emoji: '🥔' },
+                { item: 'Cabbage', price: 40, trend: '+2%', location: 'Nairobi', emoji: '🥬' }
+            ];
+
+            return `
+                <div class="animate-fade">
+                    <div class="content-header">
+                        <h2><i class="fas fa-tags"></i> Live Market Prices</h2>
+                        <div style="font-size: 0.85rem; color: var(--gray);">Updated: Just now • Nairobi Wholesale Market</div>
+                    </div>
+                    <div class="card">
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>Produce</th><th>Current Price</th><th>Trend</th><th>Location</th><th>Action</th></tr>
+                            </thead>
+                            <tbody>
+                                ${prices.map(p => `
+                                    <tr>
+                                        <td><span style="font-size: 1.2rem; margin-right: 0.5rem;">${p.emoji}</span> ${p.item}</td>
+                                        <td><strong>KES ${p.price}</strong> / kg</td>
+                                        <td><span class="stat-trend ${p.trend.startsWith('+') ? 'up' : p.trend.startsWith('-') ? 'down' : ''}">${p.trend}</span></td>
+                                        <td><i class="fas fa-map-pin"></i> ${p.location}</td>
+                                        <td><button class="btn btn-outline btn-sm" onclick="navigateTo('my-produce')"><i class="fas fa-plus"></i> List</button></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card mt-1">
+                        <h3 style="margin-bottom: 1rem;"><i class="fas fa-chart-area"></i> Price Trend (Tomatoes - Last 7 Days)</h3>
+                        <div style="height: 200px; background: linear-gradient(180deg, rgba(27,94,32,0.1) 0%, transparent 100%); border-radius: var(--radius-sm); position: relative; overflow: hidden;">
+                            <svg viewBox="0 0 700 200" style="width: 100%; height: 100%;">
+                                <polyline points="0,150 100,140 200,130 300,120 400,100 500,90 600,70 700,50" 
+                                    fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="0" cy="150" r="4" fill="var(--primary)"/>
+                                <circle cx="100" cy="140" r="4" fill="var(--primary)"/>
+                                <circle cx="200" cy="130" r="4" fill="var(--primary)"/>
+                                <circle cx="300" cy="120" r="4" fill="var(--primary)"/>
+                                <circle cx="400" cy="100" r="4" fill="var(--primary)"/>
+                                <circle cx="500" cy="90" r="4" fill="var(--primary)"/>
+                                <circle cx="600" cy="70" r="4" fill="var(--primary)"/>
+                                <circle cx="700" cy="50" r="4" fill="var(--primary)"/>
+                            </svg>
+                            <div style="position: absolute; bottom: 10px; left: 10px; font-size: 0.75rem; color: var(--gray);">May 25</div>
+                            <div style="position: absolute; bottom: 10px; right: 10px; font-size: 0.75rem; color: var(--gray);">Jun 1</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==================== SUPPLIERS / MESSAGES ====================
+        function renderSuppliers() {
+            return `
+                <div class="animate-fade">
+                    <div class="content-header">
+                        <h2><i class="fas fa-handshake"></i> My Suppliers</h2>
+                    </div>
+                    <div class="grid-2">
+                        <div class="card" style="display: flex; align-items: center; gap: 1rem;">
+                            <div class="user-avatar" style="width: 50px; height: 50px; font-size: 1.2rem;">JM</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 700;">James Mwangi</div>
+                                <div style="font-size: 0.85rem; color: var(--gray);"><i class="fas fa-map-pin"></i> Kiambu, Kenya • <i class="fas fa-star" style="color: var(--secondary);"></i> 4.9</div>
+                                <div style="margin-top: 0.5rem;">
+                                    <span class="badge badge-success">Reliable</span>
+                                    <span class="badge badge-primary">12 orders</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-outline btn-sm" onclick="navigateTo('messages')"><i class="fas fa-comment"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMessages() {
+            return `
+                <div class="animate-fade">
+                    <div class="content-header">
+                        <h2><i class="fas fa-comments"></i> Messages</h2>
+                    </div>
+                    <div class="card">
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="display: flex; gap: 1rem; padding: 1rem; background: var(--light); border-radius: var(--radius-sm); cursor: pointer;">
+                                <div class="user-avatar">JM</div>
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div style="font-weight: 700;">James Mwangi</div>
+                                        <div style="font-size: 0.8rem; color: var(--gray);">10:30 AM</div>
+                                    </div>
+                                    <div style="font-size: 0.9rem; color: var(--gray); margin-top: 0.25rem;">Your tomatoes are ready for pickup tomorrow at 6AM. Please confirm.</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 1rem; padding: 1rem; border-radius: var(--radius-sm); cursor: pointer; border: 1px solid var(--gray-light);">
+                                <div class="user-avatar" style="background: linear-gradient(135deg, var(--accent), var(--accent-light));">PK</div>
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div style="font-weight: 700;">Peter Kimani (Driver)</div>
+                                        <div style="font-size: 0.8rem; color: var(--gray);">9:15 AM</div>
+                                    </div>
+                                    <div style="font-size: 0.9rem; color: var(--gray); margin-top: 0.25rem;">I'm 15 minutes away from the farm. Traffic is light today.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==================== NOTIFICATIONS ====================
+        function toggleNotif() {
+            document.getElementById('notifPanel').classList.toggle('active');
+        }
+
+        function updateNotifications() {
+            const userNotifs = Store.notifications.filter(n => n.userId === Store.currentUser.id).slice(0, 5);
+            const notifList = document.getElementById('notifList');
+            const notifDot = document.getElementById('notifDot');
+
+            if (userNotifs.length > 0) {
+                notifDot.classList.remove('hidden');
+                notifList.innerHTML = userNotifs.map(n => `
+                    <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markRead('${n.id}')">
+                        <div class="notif-title">${n.title}</div>
+                        <div class="notif-text">${n.text}</div>
+                        <div class="notif-time"><i class="fas fa-clock"></i> ${n.time}</div>
+                    </div>
+                `).join('');
+            } else {
+                notifDot.classList.add('hidden');
+                notifList.innerHTML = '<div style="padding: 1rem; text-align: center; color: var(--gray);">No notifications</div>';
+            }
+        }
+
+        function markRead(id) {
+            const n = Store.notifications.find(x => x.id === id);
+            if (n) n.read = true;
+            Store.save();
+            updateNotifications();
+        }
+
+        // ==================== UTILITIES ====================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
+            toast.innerHTML = `<i class="fas ${icons[type]}"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function showModal(title, body, footer) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalBody').innerHTML = body;
+            document.getElementById('modalFooter').innerHTML = footer;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        function formatStatus(status) {
+            return status.replace(/_/g, ' ').replace(/\w/g, l => l.toUpperCase());
+        }
+
+        function getUnit(title) {
+            const p = Store.produce.find(x => x.title === title);
+            return p ? p.unit : 'units';
+        }
+
+        function attachPageListeners(page) {
+            // Page-specific listeners can be added here
+        }
+
+        // Close modal on overlay click
+        document.getElementById('modalOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('modalOverlay')) closeModal();
+        });
+
+        // Close notifications when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.icon-btn') && !e.target.closest('.notif-panel')) {
+                document.getElementById('notifPanel').classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
